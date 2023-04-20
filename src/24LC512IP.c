@@ -29,7 +29,7 @@ _24LC512IP_TypeDef* new_24LC512IP(uint8_t i2c_addr, uint32_t timeout) {
 	return handle;
 }
 _24LC512IP_StatusTypeDef rom_write(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t byte) {
-	if (!I2C_start || !I2C_write || !I2C_end) { return -1; }  // lib uninitialized
+	if (!I2C_start || !I2C_write || !I2C_end) { return lib_error; }  // lib uninitialized
 	I2C_start(handle->i2c_addr);
 	I2C_write(rom_addr >> 8);
 	I2C_write(rom_addr & 0xff);
@@ -37,7 +37,7 @@ _24LC512IP_StatusTypeDef rom_write(_24LC512IP_TypeDef* handle, uint16_t rom_addr
 	return (_24LC512IP_StatusTypeDef)I2C_end();
 }
 _24LC512IP_StatusTypeDef rom_read(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* byte) {
-	if (!I2C_start || !I2C_write || !I2C_request || !I2C_read || !I2C_end) { return -1; }  // lib uninitialized
+	if (!I2C_start || !I2C_write || !I2C_request || !I2C_read || !I2C_end) { return lib_error; }  // lib uninitialized
 	I2C_start(handle->i2c_addr);
 	I2C_write(rom_addr >> 8);
 	I2C_write(rom_addr & 0xff);
@@ -47,13 +47,13 @@ _24LC512IP_StatusTypeDef rom_read(_24LC512IP_TypeDef* handle, uint16_t rom_addr,
 	return stat;
 }
 _24LC512IP_StatusTypeDef i2c_stat(_24LC512IP_TypeDef* handle) {
-	if (!I2C_start || !I2C_end) { return -1; }  // lib uninitialized
+	if (!I2C_start || !I2C_end) { return lib_error; }  // lib uninitialized
 	I2C_start(handle->i2c_addr);
 	return (_24LC512IP_StatusTypeDef)I2C_end();
 }
 
 _24LC512IP_StatusTypeDef rom_write_buffer(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* buffer, uint16_t size, bool check) {
-	if (!I2C_start || !I2C_write || !I2C_write_buffer || !I2C_request || !I2C_read || !I2C_read_buffer || !I2C_end) { return -1; }  // lib uninitialized
+	if (!I2C_start || !I2C_write || !I2C_write_buffer || !I2C_request || !I2C_read || !I2C_read_buffer || !I2C_end) { return lib_error; }  // lib uninitialized
 	if (rom_addr + size - 1 > ROM_CAPACITY) { return exceeded_rom_capacity; }
 	if (!buffer) { return exceeded_buffer_capacity; }
 	const uint16_t start_addr = rom_addr;
@@ -87,7 +87,7 @@ _24LC512IP_StatusTypeDef rom_write_buffer(_24LC512IP_TypeDef* handle, uint16_t r
 	return success;
 }
 _24LC512IP_StatusTypeDef rom_read_buffer(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* buffer, uint16_t size) {
-	if (!I2C_start || !I2C_write || !I2C_request || !I2C_read || !I2C_read_buffer || !I2C_end) { return -1; }  // lib uninitialized
+	if (!I2C_start || !I2C_write || !I2C_request || !I2C_read || !I2C_read_buffer || !I2C_end) { return lib_error; }  // lib uninitialized
 	if (rom_addr + size - 1 > ROM_CAPACITY) { return exceeded_rom_capacity; }
 	if (!buffer) {  // set pointer
 		I2C_start(handle->i2c_addr);

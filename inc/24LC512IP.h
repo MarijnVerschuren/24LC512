@@ -27,6 +27,7 @@
 #define MCU_24LC512IP_H
 #include "stdint.h"
 #include "stddef.h"
+#include "malloc.h"
 
 #define ROM_CAPACITY 0xffff
 #define ROM_PAGE_SIZE 32
@@ -50,7 +51,8 @@ typedef enum {
 	unexpected_size =			0x10u,	// received the wrong amount of bytes
 	timeout =					0x20u,
 	i2c_arbitration_error =		0x40u,
-	i2c_bus_error =				0x80u	// any other error on the i2c bus
+	i2c_bus_error =				0x80u,	// any other error on the i2c bus
+	lib_error =					0xFFu,	// lib not initialized
 } _24LC512IP_StatusTypeDef;
 
 typedef struct {
