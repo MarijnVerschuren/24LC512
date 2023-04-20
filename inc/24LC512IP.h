@@ -26,8 +26,7 @@
 #ifndef MCU_24LC512IP_H
 #define MCU_24LC512IP_H
 #include "stdint.h"
-#include "stddef.h"
-#include "malloc.h"
+#include <stdlib.h>
 
 #define ROM_CAPACITY 0xffff
 #define ROM_PAGE_SIZE 32
@@ -68,7 +67,7 @@ _24LC512IP_TypeDef* new_24LC512IP(uint8_t i2c_addr, uint32_t timeout);
 _24LC512IP_StatusTypeDef rom_write(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t byte);
 _24LC512IP_StatusTypeDef rom_read(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* byte);
 _24LC512IP_StatusTypeDef i2c_stat(_24LC512IP_TypeDef* handle);
-_24LC512IP_StatusTypeDef rom_write_buffer(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* buffer, uint16_t size, bool check = false);
+_24LC512IP_StatusTypeDef rom_write_buffer(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* buffer, uint16_t size, uint8_t check);
 _24LC512IP_StatusTypeDef rom_read_buffer(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* buffer, uint16_t size);
 _24LC512IP_StatusTypeDef rom_write_buffer_check(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* buffer, uint16_t size);
 
