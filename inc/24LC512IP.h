@@ -40,6 +40,8 @@ typedef uint8_t (*I2C_write_buffer_t)(uint8_t* buffer, uint32_t size);
 typedef uint8_t (*I2C_read_t)(void);
 typedef uint8_t (*I2C_read_buffer_t)(uint8_t* buffer, uint32_t size);
 typedef uint8_t (*I2C_end_t)(void);
+typedef void (*delay_t)(uint32_t);
+typedef uint32_t (*get_tick_t)(void);
 
 typedef enum {
 	success =					0x00u,
@@ -61,7 +63,17 @@ typedef struct {
 
 // TODO: pass function pointers for initialization
 // TODO: add this repo as a submodule for EEPROM_Programmer (merge that change to EEPROM_Programmer main)
-void init_24LC512IP_lib(I2C_start_t I2C_start, I2C_request_t I2C_request, I2C_write_t I2C_write, I2C_write_buffer_t I2C_write_buffer, I2C_read_t I2C_read, I2C_read_buffer_t I2C_read_buffer, I2C_end_t I2C_end);
+void init_24LC512IP_lib(
+		I2C_start_t			I2C_start,
+		I2C_request_t		I2C_request,
+		I2C_write_t			I2C_write,
+		I2C_write_buffer_t	I2C_write_buffer,
+		I2C_read_t			I2C_read,
+		I2C_read_buffer_t	I2C_read_buffer,
+		I2C_end_t			I2C_end,
+		delay_t				delay,
+		get_tick_t			get_tick
+);
 _24LC512IP_TypeDef* new_24LC512IP(uint8_t i2c_addr, uint32_t timeout);
 
 _24LC512IP_StatusTypeDef rom_write(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t byte);

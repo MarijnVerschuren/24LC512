@@ -14,9 +14,21 @@ I2C_write_buffer_t	I2C_write_buffer =	NULL;
 I2C_read_t			I2C_read =			NULL;
 I2C_read_buffer_t	I2C_read_buffer =	NULL;
 I2C_end_t			I2C_end =			NULL;
+delay_t				delay =				NULL;
+get_tick_t			get_tick =			NULL;
 
 
-void init_24LC512IP_lib(I2C_start_t _I2C_start, I2C_request_t _I2C_request, I2C_write_t _I2C_write, I2C_write_buffer_t _I2C_write_buffer, I2C_read_t _I2C_read, I2C_read_buffer_t _I2C_read_buffer, I2C_end_t _I2C_end) {
+void init_24LC512IP_lib(
+		I2C_start_t			_I2C_start,
+		I2C_request_t		_I2C_request,
+		I2C_write_t			_I2C_write,
+		I2C_write_buffer_t	_I2C_write_buffer,
+		I2C_read_t			_I2C_read,
+		I2C_read_buffer_t	_I2C_read_buffer,
+		I2C_end_t			_I2C_end,
+		delay_t				_delay,
+		get_tick_t			_get_tick
+) {
 	I2C_start =			_I2C_start;
 	I2C_request =		_I2C_request;
 	I2C_write =			_I2C_write;
@@ -24,6 +36,8 @@ void init_24LC512IP_lib(I2C_start_t _I2C_start, I2C_request_t _I2C_request, I2C_
 	I2C_read =			_I2C_read;
 	I2C_read_buffer =	_I2C_read_buffer;
 	I2C_end =			_I2C_end;
+	delay =				_delay;
+	_get_tick =			_get_tick;
 }
 _24LC512IP_TypeDef* new_24LC512IP(uint8_t i2c_addr, uint32_t timeout) {
 	_24LC512IP_TypeDef* handle = (_24LC512IP_TypeDef*)malloc(sizeof(_24LC512IP_TypeDef));
@@ -56,9 +70,9 @@ _24LC512IP_StatusTypeDef i2c_stat(_24LC512IP_TypeDef* handle) {
 }
 
 _24LC512IP_StatusTypeDef rom_write_buffer(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* buffer, uint16_t size, uint8_t check) {
-	if (!I2C_start || !I2C_write || !I2C_write_buffer || !I2C_request || !I2C_read || !I2C_read_buffer || !I2C_end) { return lib_error; }  // lib uninitialized
+	if (!I2C_start || !I2C_write || !I2C_write_buffer || !I2C_request || !I2C_read || !I2C_read_buffer || !I2C_end || !delay || !get_tick) { return lib_error; }  // lib uninitialized
 	if (rom_addr + size - 1 > ROM_CAPACITY) { return exceeded_rom_capacity; }
-	if (!buffer) { return exceeded_buffer_capacity; }
+	if (!buffer) { return buffer_error; }
 	const uint16_t start_addr = rom_addr;
 	const uint16_t start_size = size;
 	uint8_t* start_buffer = buffer;
@@ -77,10 +91,10 @@ _24LC512IP_StatusTypeDef rom_write_buffer(_24LC512IP_TypeDef* handle, uint16_t r
 		size -= n;
 
 		delay(5);  // typical page write takes 5ms
-		uint32_t start = millis();
+		uint32_t start = get_tick();
 		while (i2c_stat(handle)) {
 			delay(1);  // prevent spamming rom
-			if (millis() - start > handle->timeout) { return timeout; }
+			if (get_tick() - start > handle->timeout) { return timeout; }
 		}
 	}
 	if (check) {
@@ -117,6 +131,7 @@ _24LC512IP_StatusTypeDef rom_read_buffer(_24LC512IP_TypeDef* handle, uint16_t ro
 }
 
 _24LC512IP_StatusTypeDef rom_write_buffer_check(_24LC512IP_TypeDef* handle, uint16_t rom_addr, uint8_t* buffer, uint16_t size) {
+	if (!delay) { return lib_error; }
 	uint8_t* check_buffer = malloc(size);
 	if (!check_buffer) { return buffer_error; }
 	_24LC512IP_StatusTypeDef stat;
