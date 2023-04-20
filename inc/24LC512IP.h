@@ -61,8 +61,7 @@ typedef struct {
 	uint32_t timeout;
 } _24LC512IP_TypeDef;
 
-// TODO: pass function pointers for initialization
-// TODO: add this repo as a submodule for EEPROM_Programmer (merge that change to EEPROM_Programmer main)
+// TODO: improve code (this is still made for arduino)
 void init_24LC512IP_lib(
 		I2C_start_t			I2C_start,
 		I2C_request_t		I2C_request,
