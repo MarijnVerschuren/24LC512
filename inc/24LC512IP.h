@@ -71,7 +71,7 @@ void init_24LC512IP_lib(
 		I2C_read_t			I2C_read,
 		I2C_read_buffer_t	I2C_read_buffer,
 		I2C_end_t			I2C_end,
-		delay_t				delay,
+		delay_t				delay_ms,
 		get_tick_t			get_tick
 );
 _24LC512IP_TypeDef* new_24LC512IP(uint8_t i2c_addr, uint32_t timeout);
